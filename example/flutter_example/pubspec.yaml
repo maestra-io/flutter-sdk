@@ -1,0 +1,37 @@
+name: flutter_example
+description: "A new Flutter project."
+publish_to: 'none'
+
+version: 1.0.0+1
+
+environment:
+  sdk: '>=3.3.4 <4.0.0'
+  # Example is migrated to UISceneDelegate (FlutterImplicitEngineDelegate).
+  # Flutter 3.41 is the first version where UISceneDelegate-based lifecycle
+  # is the recommended path for new iOS Flutter apps. See:
+  # https://docs.flutter.dev/release/breaking-changes/uiscenedelegate
+  flutter: '>=3.41.0'
+
+dependencies:
+  flutter:
+    sdk: flutter
+  cupertino_icons: ^1.0.6
+  mindbox: ^2.13.0 #https://developers.maestra.io/docs/adding-the-sdk-to-your-app
+  permission_handler: ^12.0.3
+  url_launcher: ^6.2.6
+  shared_preferences: ^2.5.2
+  shared_preference_app_group: ^2.1.0
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^6.0.0
+
+flutter:
+  uses-material-design: true
+  # Per-project override of the global `flutter config` flag. Forced to true
+  # so the example always exercises the SPM path the plugin now ships,
+  # regardless of the consumer's global flutter config. Flip to false locally
+  # to test the CocoaPods-only path.
+  config:
+    enable-swift-package-manager: true

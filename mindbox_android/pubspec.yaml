@@ -1,0 +1,32 @@
+name: mindbox_android
+description: The implementation of 'mindbox' plugin for the Android platform.
+version: 2.16.0
+homepage: https://github.com/maestra-io/flutter-sdk
+repository: https://github.com/maestra-io/flutter-sdk/tree/main/mindbox_android
+
+environment:
+  sdk: ">=2.17.0 <4.0.0"
+  flutter: ">=3.0.0"
+
+flutter:
+  plugin:
+    implements: mindbox
+    platforms:
+      android:
+        package: cloud.mindbox.mindbox_android
+        pluginClass: MindboxAndroidPlugin
+
+dependencies:
+  flutter:
+    sdk: flutter
+  mindbox_platform_interface: ^2.16.0
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^2.0.1
+
+analyzer:
+  exclude: ['**_test.dart'] 
+
+

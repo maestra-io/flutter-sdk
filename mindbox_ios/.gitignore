@@ -1,0 +1,14 @@
+.DS_Store
+.dart_tool/
+.idea
+.metadata
+.packages
+pubspec.lock
+.pub/
+mindbox_ios.iml
+build/
+
+# Swift Package Manager
+.build/
+.swiftpm/
+Package.resolved

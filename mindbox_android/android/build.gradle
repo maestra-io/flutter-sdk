@@ -1,0 +1,77 @@
+group 'cloud.mindbox.mindbox_android'
+version '1.0-SNAPSHOT'
+
+buildscript {
+    ext.kotlin_version = '1.9.22'
+    repositories {
+        google()
+        mavenCentral()
+        mavenLocal()
+    }
+
+    dependencies {
+        classpath 'com.android.tools.build:gradle:8.6.0'
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
+    }
+}
+
+rootProject.allprojects {
+    repositories {
+        google()
+        mavenCentral()
+    }
+}
+
+apply plugin: 'com.android.library'
+
+def builtInKotlinMinAgpMajor = 9
+def agpMajor = com.android.Version.ANDROID_GRADLE_PLUGIN_VERSION.tokenize('.')[0] as int
+def builtInKotlin = agpMajor >= builtInKotlinMinAgpMajor && providers.gradleProperty('android.builtInKotlin')
+        .map { it.toBoolean() }
+        .getOrElse(true)
+if (!builtInKotlin) {
+    pluginManager.apply('kotlin-android')
+}
+
+def safeExtGet(prop, fallback) {
+    rootProject.ext.has(prop) ? rootProject.ext.get(prop) : fallback
+}
+
+android {
+    namespace "cloud.mindbox.mindbox_android"
+    compileSdk safeExtGet('mindboxCompileSdkVersion', 36) as Integer
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+
+    if (!builtInKotlin) {
+        kotlinOptions {
+            jvmTarget = '1.8'
+        }
+    }
+
+    sourceSets {
+        main.java.srcDirs += 'src/main/kotlin'
+    }
+
+    defaultConfig {
+        minSdkVersion 23
+        targetSdkVersion 36
+    }
+}
+
+if (builtInKotlin) {
+    kotlin {
+        compilerOptions {
+            jvmTarget = org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_1_8
+        }
+    }
+}
+
+dependencies {
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
+    api 'cloud.mindbox:mobile-sdk:2.16.0'
+    compileOnly 'cloud.mindbox:mindbox-common:2.16.0'
+}

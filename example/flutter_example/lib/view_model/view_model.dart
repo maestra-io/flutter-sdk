@@ -1,0 +1,123 @@
+import 'package:mindbox/mindbox.dart';
+import 'package:permission_handler/permission_handler.dart';
+
+class ViewModel {
+  //https://developers.maestra.io/docs/flutter-sdk-methods
+  static void syncOperation() {
+    Mindbox.instance.executeSyncOperation(
+      operationSystemName: 'APIMethodForReleaseExampleIos',
+      operationBody: {
+        "viewProduct": {
+          "product": {
+            "ids": {"website": "1"}
+          }
+        }
+      },
+      onSuccess: (data) {},
+      onError: (error) {},
+    );
+  }
+
+  static void asyncOperation() {
+    Mindbox.instance.executeAsyncOperation(
+        operationSystemName: "APIMethodForReleaseExampleIos",
+        operationBody: {
+          "viewProduct": {
+            "product": {
+              "ids": {"website": "2"}
+            }
+          }
+        });
+  }
+
+  //used for send action "notification center was opened"
+  static void asyncOperationNCOpen() {
+    Mindbox.instance.executeAsyncOperation(
+        operationSystemName: "mobileapp.NCOpen", operationBody: {});
+  }
+
+  //used for send action "click on push from notification center"
+  static void asyncOperationNCPushOpen(String pushName, String pushDate) {
+    Mindbox.instance.executeAsyncOperation(
+        operationSystemName: "mobileapp.NCPushOpen",
+        operationBody: getPushOpenOperationBody(pushName, pushDate));
+  }
+
+  static void getSDKVersion(void Function(String) completion) {
+    Mindbox.instance.nativeSdkVersion.then((value) {
+      completion(value);
+    });
+  }
+
+  static void getToken(void Function(String) completion) {
+    Mindbox.instance.getToken((value) {
+      completion(value);
+    });
+  }
+
+  static void getDeviceUUID(void Function(String) completion) {
+    Mindbox.instance.getDeviceUUID((value) {
+      print(value);
+      completion(value);
+    });
+  }
+
+  static Future<void> requestPermissions() async {
+    var status = await Permission.notification.status;
+    if (!status.isGranted) {
+      status = await Permission.notification.request();
+      print("Permission status: $status");
+      Mindbox.instance.refreshNotificationPermissionStatus();
+    }
+  }
+
+  //https://developers.maestra.io/docs/in-app
+  static void chooseInAppCallback(ChooseInappCallback chooseInappCallback) {
+    switch (chooseInappCallback) {
+      case ChooseInappCallback.defaultInAppCallback:
+        break;
+      case ChooseInappCallback.customInAppCallback:
+        Mindbox.instance.registerInAppCallback(callbacks: [
+          CustomInAppCallback((id, redirectUrl, payload) {
+            print("On click");
+            print(id);
+            print(redirectUrl);
+            print(payload);
+          }, (id) {
+            print("On close");
+            print(id);
+          })
+        ]);
+      case ChooseInappCallback.urlInAppCallback:
+        Mindbox.instance.registerInAppCallback(callbacks: [UrlInAppCallback()]);
+      case ChooseInappCallback.copyPayloadInAppCallback:
+        Mindbox.instance
+            .registerInAppCallback(callbacks: [CopyPayloadInAppCallback()]);
+      case ChooseInappCallback.emptyInAppCallback:
+        Mindbox.instance
+            .registerInAppCallback(callbacks: [EmptyInAppCallback()]);
+    }
+  }
+
+  static Map<String, dynamic> getPushOpenOperationBody(
+      String pushName, String pushDate) {
+    return {
+      "data": {
+        "customerAction": {
+          "customFields": {
+            "mobPushSendDateTime": pushDate,
+            "mobPushTranslateName": pushName
+          }
+        }
+      }
+    };
+  }
+}
+
+enum ChooseInappCallback {
+  defaultInAppCallback,
+  customInAppCallback,
+  urlInAppCallback,
+  emptyInAppCallback,
+  copyPayloadInAppCallback,
+}
